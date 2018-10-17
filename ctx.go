@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	s "strings"
 
 	"github.com/carturoch/ctx/listener"
 )
@@ -34,6 +35,18 @@ func registerActions() []action {
 // ParseArgs converts given args into app valid args
 func ParseArgs(args []string) Argument {
 	parsed := Argument{"", ""}
+	var cleanArgs []string
+	for _, arg := range args {
+		val := s.TrimSpace(arg)
+		if val == "" {
+			continue
+		}
+		cleanArgs = append(cleanArgs, val)
+	}
+	if len(cleanArgs) < 2 {
+		return parsed
+	}
+	parsed.Value = s.Join(cleanArgs[1:], " ")
 	return parsed
 }
 

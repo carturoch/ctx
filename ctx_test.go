@@ -15,9 +15,19 @@ func TestParseArgs(t *testing.T) {
 		want Argument
 	}{
 		{
-			"Parses a single dashed flag",
-			args{[]string{"a", ""}},
-			Argument{"", "a"},
+			"Returns empty argument when nothing is given",
+			args{[]string{"ctx", ""}},
+			Argument{"", ""},
+		},
+		{
+			"Discards empty spaces",
+			args{[]string{"ctx", "  "}},
+			Argument{"", ""},
+		},
+		{
+			"Detects the value",
+			args{[]string{"ctx", "Some", "value"}},
+			Argument{"Some value", ""},
 		},
 	}
 
