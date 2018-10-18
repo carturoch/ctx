@@ -33,7 +33,7 @@ func registerActions() []action {
 }
 
 // ParseArgs converts given args into app valid args
-func ParseArgs(args []string) Argument {
+func ParseArgs(args []string) (Argument, error) {
 	parsed := Argument{"", ""}
 	var cleanArgs []string
 	for _, arg := range args {
@@ -44,10 +44,10 @@ func ParseArgs(args []string) Argument {
 		cleanArgs = append(cleanArgs, val)
 	}
 	if len(cleanArgs) < 2 {
-		return parsed
+		return parsed, nil
 	}
 	parsed.Value = s.Join(cleanArgs[1:], " ")
-	return parsed
+	return parsed, nil
 }
 
 func main() {
