@@ -10,38 +10,44 @@ func TestParseArgs(t *testing.T) {
 		args []string
 	}
 	tests := []struct {
-		name    string
-		args    args
-		want    Argument
-		wantErr bool
+		name string
+		args args
+		want Argument
 	}{
 		{
 			"Returns empty argument when nothing is given",
 			args{[]string{"ctx", ""}},
 			Argument{"", ""},
-			false,
 		},
 		{
 			"Discards empty spaces",
 			args{[]string{"ctx", "  "}},
 			Argument{"", ""},
-			false,
 		},
 		{
 			"Detects the value",
 			args{[]string{"ctx", "Some", "value"}},
 			Argument{"Some value", ""},
-			false,
+		},
+		{
+			"Chars are parsed as value",
+			args{[]string{"ctx", "-_-", "Some", "value"}},
+			Argument{"-_- Some value", ""},
+		},
+		{
+			"Parses short flags",
+			args{[]string{"ctx", "-a", "Some", "value"}},
+			Argument{"Some value", "-a"},
+		},
+		{
+			"Parses long flags",
+			args{[]string{"ctx", "--version"}},
+			Argument{"", "--version"},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := ParseArgs(tt.args.args)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("ParseArgs() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
+			if got := ParseArgs(tt.args.args); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("ParseArgs() = %v, want %v", got, tt.want)
 			}
 		})

@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	r "regexp"
 	s "strings"
 
 	"github.com/carturoch/ctx/listener"
@@ -33,7 +34,7 @@ func registerActions() []action {
 }
 
 // ParseArgs converts given args into app valid args
-func ParseArgs(args []string) (Argument, error) {
+func ParseArgs(args []string) Argument {
 	parsed := Argument{"", ""}
 	var cleanArgs []string
 	for _, arg := range args {
@@ -44,10 +45,14 @@ func ParseArgs(args []string) (Argument, error) {
 		cleanArgs = append(cleanArgs, val)
 	}
 	if len(cleanArgs) < 2 {
-		return parsed, nil
+		return parsed
+	}
+	if match, _ := r.MatchString("^\\-{1,2}[a-zA-Z0-9]+", cleanArgs[1]); match {
+		parsed.Flag = cleanArgs[1]
+		cleanArgs = cleanArgs[1:]
 	}
 	parsed.Value = s.Join(cleanArgs[1:], " ")
-	return parsed, nil
+	return parsed
 }
 
 func main() {
