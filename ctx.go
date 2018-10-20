@@ -2,13 +2,14 @@ package main
 
 import (
 	"fmt"
+	"os"
 	r "regexp"
 	s "strings"
 
 	"github.com/carturoch/ctx/listener"
 )
 
-type action struct {
+type Action struct {
 	Name     string
 	Desc     string
 	Flag     string
@@ -21,9 +22,9 @@ type Argument struct {
 	Flag  string
 }
 
-func registerActions() []action {
-	registered := []action{
-		action{
+func registerActions() []Action {
+	registered := []Action{
+		Action{
 			"Default",
 			"Status check",
 			"",
@@ -55,7 +56,15 @@ func ParseArgs(args []string) Argument {
 	return parsed
 }
 
+// SelectAction detects the action to take given the registered actions
+// and the parsed argument
+func SelectAction(_arg Argument, actions []Action) Action {
+	return actions[0]
+}
+
 func main() {
 	actions := registerActions()
-	fmt.Println(actions[0].Listener(""))
+	arg := ParseArgs(os.Args)
+	selected := SelectAction(arg, actions)
+	fmt.Println(selected.Listener(""))
 }
