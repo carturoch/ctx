@@ -1,54 +1,36 @@
 package main
 
-import (
-	"reflect"
-	"testing"
-)
+import "testing"
 
-func TestParseArgs(t *testing.T) {
+func TestGetQuery(t *testing.T) {
 	type args struct {
 		args []string
 	}
 	tests := []struct {
 		name string
 		args args
-		want Argument
+		want string
 	}{
 		{
-			"Returns empty argument when nothing is given",
-			args{[]string{"ctx", ""}},
-			Argument{"", ""},
+			"Returns empty if no argument is present",
+			args{[]string{}},
+			"",
 		},
 		{
-			"Discards empty spaces",
-			args{[]string{"ctx", "  "}},
-			Argument{"", ""},
+			"Returns empty if only one arg is present",
+			args{[]string{"ctx"}},
+			"",
 		},
 		{
-			"Detects the value",
-			args{[]string{"ctx", "Some", "value"}},
-			Argument{"Some value", ""},
-		},
-		{
-			"Chars are parsed as value",
-			args{[]string{"ctx", "-_-", "Some", "value"}},
-			Argument{"-_- Some value", ""},
-		},
-		{
-			"Parses short flags",
-			args{[]string{"ctx", "-a", "Some", "value"}},
-			Argument{"Some value", "-a"},
-		},
-		{
-			"Parses long flags",
-			args{[]string{"ctx", "--version"}},
-			Argument{"", "--version"},
+			"Joins with spaces the value",
+			args{[]string{"ctx", "one", "two"}},
+			"one two",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := ParseArgs(tt.args.args); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("ParseArgs() = %v, want %v", got, tt.want)
+			if got := GetQuery(tt.args.args); got != tt.want {
+				t.Errorf("GetQuery() = %v, want %v", got, tt.want)
 			}
 		})
 	}
